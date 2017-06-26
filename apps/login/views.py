@@ -5,19 +5,18 @@ from .models import User
 
 # Create your views here.
 def index(request):
-    # User.userManager.all().delete()
-    user = User.userManager.get(first_name = "Marcus")
+    user = User.objects.get(first_name = "Marcus")
     print "password " + user.password
-    list = User.userManager.all()
-    for i in list:
-        print i.email
+    list = User.objects.all()
+    # for i in list:
+    #     print i.email
     return render(request, 'login/index.html')
 
 
 def register(request):
 
     if request.method == "POST":
-        values = User.userManager.register(request.POST['first'], request.POST['last'], request.POST['email'], request.POST['password'], request.POST['confirm'])
+        values = User.objects.register(request.POST['first'], request.POST['last'], request.POST['email'], request.POST['password'], request.POST['confirm'])
         successful = True
 
         if values[0]:
@@ -39,7 +38,7 @@ def register(request):
 
             if successful:
                 hashed = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
-                User.userManager.create(first_name=request.POST['first'], last_name=request.POST['last'],
+                User.objects.create(first_name=request.POST['first'], last_name=request.POST['last'],
                                         email=request.POST['email'], password=hashed)
                 request.session['name'] = request.POST['first']
                 return redirect('/success')
@@ -52,8 +51,8 @@ def register(request):
 
 def login(request):
     if request.method == "POST":
-        login = User.userManager.login(request.POST['email'], request.POST['password'])
-        print login
+        login = User.objects.login(request.POST['email'], request.POST['password'])
+        # print login
         if login[0]:
             request.session['name'] = login[1]
             return redirect('/success')

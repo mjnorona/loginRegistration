@@ -32,7 +32,7 @@ class UserManager(models.Manager):
             passwordLength = False
         if not password == confirm:
             passwordMatch = False
-        if User.userManager.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             userNotExist = False
 
         # only pass back the strings that aren't ""
@@ -45,11 +45,11 @@ class UserManager(models.Manager):
         logged = [False]
         passedValues = []
         
-        if User.userManager.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             
-            user = User.userManager.get(email = email)
-            print "input password = " + bcrypt.hashpw(password.encode(), user.password.encode())
-            print "saved password = " + bcrypt.hashpw(user.password.encode(), user.password.encode())
+            user = User.objects.get(email = email)
+            # print "input password = " + bcrypt.hashpw(password.encode(), user.password.encode())
+            # print "saved password = " + bcrypt.hashpw(user.password.encode(), user.password.encode())
             if not user.password == bcrypt.hashpw(password.encode(), user.password.encode()):
                 logged = [False]
             else:
@@ -64,4 +64,4 @@ class User(models.Model):
     password = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    userManager = UserManager()
+    objects = UserManager()
