@@ -1,7 +1,7 @@
 
 from __future__ import unicode_literals
 from django.db import models
-import re
+import re, bcrypt
 
 NAME_REGEX = re.compile(r'[a-zA-Z]')
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
@@ -44,10 +44,13 @@ class UserManager(models.Manager):
     def login(self, email, password):
         logged = [False]
         passedValues = []
-        print User.userManager.filter(email=email).exists()
+        
         if User.userManager.filter(email=email).exists():
+            
             user = User.userManager.get(email = email)
-            if not password == user.password:
+            print "input password = " + bcrypt.hashpw(password.encode(), user.password.encode())
+            print "saved password = " + bcrypt.hashpw(user.password.encode(), user.password.encode())
+            if not user.password == bcrypt.hashpw(password.encode(), user.password.encode()):
                 logged = [False]
             else:
                 logged = [True, user.first_name]

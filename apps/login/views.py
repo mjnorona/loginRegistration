@@ -1,10 +1,13 @@
-
+import bcrypt
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import User
 
 # Create your views here.
 def index(request):
+    # User.userManager.all().delete()
+    user = User.userManager.get(first_name = "Marcus")
+    print "password " + user.password
     list = User.userManager.all()
     for i in list:
         print i.email
@@ -35,9 +38,9 @@ def register(request):
                 successful = False
 
             if successful:
-
+                hashed = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
                 User.userManager.create(first_name=request.POST['first'], last_name=request.POST['last'],
-                                        email=request.POST['email'], password=request.POST['password'])
+                                        email=request.POST['email'], password=hashed)
                 request.session['name'] = request.POST['first']
                 return redirect('/success')
             else:
